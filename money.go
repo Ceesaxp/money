@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	//. "github.com/WAY29/icecream-go/icecream"
 )
 
 // RoundingMode defines how monetary amounts should be rounded
@@ -71,7 +72,7 @@ func round(amount float64, scale int, mode RoundingMode) int64 {
 // New creates a new Money instance from a decimal amount
 func New(amount float64, currencyCode string, mode RoundingMode) (*Money, error) {
 	if math.IsNaN(amount) || math.IsInf(amount, 0) {
-		return nil, errors.New("invalid amount")
+		return nil, ErrInvalidAmount
 	}
 
 	// Upper-case currency code
@@ -82,8 +83,8 @@ func New(amount float64, currencyCode string, mode RoundingMode) (*Money, error)
 		return nil, ErrInvalidCurrency
 	}
 
-	// Convert to cents (or smallest currency unit)
-	cents := round(amount*math.Pow10(currency.Scale), currency.Scale, mode)
+	// Convert to smallest currency unit
+	cents := round(amount, currency.Scale, mode)
 
 	return &Money{
 		amount:   cents,
